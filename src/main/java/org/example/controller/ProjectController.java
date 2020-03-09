@@ -2,17 +2,22 @@ package org.example.controller;
 
 import org.example.entities.Project;
 import org.example.services.ProjectService;
-import org.example.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.example.utils.Utils.copyNotNullProperties;
+import static org.example.utils.Utils.getBindingResultErrors;
+
 @RestController
-@RequestMapping(value = "/project")
+@RequestMapping(value = "/projects")
 public class ProjectController {
 
     @Autowired
@@ -20,53 +25,47 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<Project>> getAllProjects() {
-        try {
-            if (!projectService.getAll().isEmpty()) {
-                return new ResponseEntity<>(projectService.getAll(), HttpStatus.OK);
-            } else
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        if (!projectService.findAll().isEmpty()) {
+            return new ResponseEntity<>(projectService.findAll(), HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable("id") Long id) {
-        Optional<Project> project = projectService.get(id);
+    public ResponseEntity<Object> getProjectById(@PathVariable("id") long id) {
+        Optional<Project> project = projectService.findById(id);
         if (project.isPresent()) {
-            return new ResponseEntity<>(project.get(), HttpStatus.OK);
+            return new ResponseEntity<>(project, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping
-    public ResponseEntity<Project> addProject(@RequestBody Project project) {
-        try {
-            return new ResponseEntity<>(projectService.save(project), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+    public ResponseEntity<Object> addProject(@Valid Project project, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(getBindingResultErrors(project, bindingResult), HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(projectService.save(project), HttpStatus.OK);
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable("id") Long id, @RequestBody Project target) {
-        Optional<Project> source = projectService.get(id);
-        if (source.isPresent()) {
-            Utils.copyNotNullProperties(source, target);
-            return new ResponseEntity<>(projectService.save(target), HttpStatus.OK);
+    public ResponseEntity<Project> updateProject(@PathVariable("id") Project target, Project source) {
+        Project updatedProject = projectService.update(source, target);
+        if (updatedProject != null) {
+            return new ResponseEntity<>(updatedProject, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<HttpStatus> deleteProject(@PathVariable("id") Project project) {
-        try {
-            projectService.delete(project);
+        boolean result = projectService.delete(project);
+        if (result)
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-        }
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
