@@ -3,7 +3,6 @@ package org.example.controller;
 import org.example.entities.Project;
 import org.example.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -13,7 +12,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-import static org.example.utils.Utils.copyNotNullProperties;
 import static org.example.utils.Utils.getBindingResultErrors;
 
 @RestController
@@ -51,12 +49,12 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable("id") Project target, Project source) {
-        Project updatedProject = projectService.update(source, target);
-        if (updatedProject != null) {
-            return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+    public ResponseEntity<Object> updateProject(@PathVariable("id") Project target,
+                                                @Valid Project source, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(getBindingResultErrors(source, bindingResult), HttpStatus.BAD_REQUEST);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(projectService.update(source, target), HttpStatus.OK);
         }
     }
 
