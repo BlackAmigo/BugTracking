@@ -138,4 +138,33 @@ public class ProjectServiceTest {
         verifyNoMoreInteractions(projectRepositoryMock);
         assertFalse(foundProject.isPresent());
     }
+    @Test
+    public void update() {
+        Project projectTarget = new Project();
+        projectTarget.setName("projectTarget");
+        Project projectSource = new Project();
+        projectSource.setName("projectSource");
+
+        when(projectRepositoryMock.save(projectTarget)).thenReturn(projectTarget);
+
+        Project projectTargetModified = projectService.update(projectSource, projectTarget);
+
+        verify(projectRepositoryMock, times(1)).save(projectTarget);
+        verifyNoMoreInteractions(projectRepositoryMock);
+        assertEquals(projectTargetModified.getName(), projectSource.getName());
+    }
+
+    @Test
+    public void updateWhenParameterIsNull() {
+        Project projectTarget = new Project();
+        projectTarget.setName("projectTarget");
+        Project projectSource = new Project();
+        projectSource.setName("projectSource");
+
+        Project projectTargetModified = projectService.update(projectSource, null);
+
+        verify(projectRepositoryMock, times(0)).save(any());
+        verifyNoMoreInteractions(projectRepositoryMock);
+        assertNull(projectTargetModified);
+    }
 }

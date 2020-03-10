@@ -49,12 +49,12 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateProject(@PathVariable("id") Project target,
-                                                @Valid Project source, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(getBindingResultErrors(source, bindingResult), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Project> updateProject(@PathVariable("id") Project target, Project source) {
+        Project updatedProject = projectService.update(source, target);
+        if (updatedProject != null) {
+            return new ResponseEntity<>(updatedProject, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(projectService.update(source, target), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
