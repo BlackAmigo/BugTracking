@@ -1,9 +1,14 @@
 package org.example.entities;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Date;
 
 @Entity
@@ -12,13 +17,21 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @NotBlank(message = "Not blank value is required")
     private long projectId;
+    @NotBlank(message = "Not blank value is required")
     private String name;
     private String textDescription;
+    @PositiveOrZero(message = "Not negative value is required")
     private int priority;
     private Date createdDate;
     private Date lastModifiedDate;
     private TaskStatus status;
+
+    public Task() {
+        this.createdDate = new Date();
+        this.status = TaskStatus.NEW;
+    }
 
     public long getId() {
         return id;
@@ -64,10 +77,6 @@ public class Task {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createDate) {
-        this.createdDate = createDate;
-    }
-
     public Date getLastModifiedDate() {
         return lastModifiedDate;
     }
@@ -82,5 +91,15 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(this, o);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 }
