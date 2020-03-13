@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/projects")
+@RequestMapping(value = "api/projects")
 public class ProjectController extends AbstractController<Project>{
 
     @Autowired
