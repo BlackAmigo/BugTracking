@@ -1,12 +1,14 @@
 package org.example.services;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.Optional;
 
 public interface EntityService<E> {
     E save(E entity);
     E update(E source, E target);
-    List<E> getAll();
+    Page<E> getAll(Pageable pageable);
     Optional<E> getById(Long id);
     boolean delete(E entity);
 }
