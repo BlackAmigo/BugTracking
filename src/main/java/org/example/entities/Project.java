@@ -1,9 +1,11 @@
 package org.example.entities;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 public class Project {
@@ -19,9 +21,7 @@ public class Project {
     private Date lastModifiedDate;
 
     public Project() {
-        Date date = new Date();
-        createdDate = date;
-        lastModifiedDate = date;
+        this.createdDate = new Date();
     }
 
     public long getId() {
@@ -62,18 +62,11 @@ public class Project {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Project project = (Project) o;
-        return id == project.id &&
-                name.equals(project.name) &&
-                Objects.equals(textDescription, project.textDescription) &&
-                createdDate.equals(project.createdDate) &&
-                lastModifiedDate.equals(project.lastModifiedDate);
+        return EqualsBuilder.reflectionEquals(this, o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, textDescription, createdDate, lastModifiedDate);
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 }
