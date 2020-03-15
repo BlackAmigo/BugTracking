@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.example.utils.Utils.copyNotNullProperties;
+import static org.example.utils.Utils.copyProperties;
 
 @Service
-public class ProjectServiceImpl implements ProjectService{
+public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private ProjectRepository repository;
@@ -25,13 +25,12 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Override
-    public Project update(Project source, Project target) {
-        if (target != null && source != null) {
-            copyNotNullProperties(source, target);
-            return save(target);
-        } else {
-            return null;
+    public ValidationResult<Project> update(Project source, Project target) {
+        ValidationResult<Project> result = copyProperties(source, target);
+        if (result.getErrors().isEmpty()) {
+            save(target);
         }
+        return new ValidationResult<>(result.getEntity(), result.getErrors());
     }
 
     @Override

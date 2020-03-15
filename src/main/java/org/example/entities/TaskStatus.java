@@ -6,13 +6,13 @@ public enum TaskStatus {
     IN_PROGRESS("В РАБОТЕ"),
     CLOSED("ЗАКРЫТА");
 
-    private String state;
+    private final String value;
 
-    TaskStatus(String state) {
-        this.state = state;
+    TaskStatus(String value) {
+        this.value = value;
     }
 
-    public String getState() {
-        return state;
+    public String getValue() {
+        return value;
     }
 }

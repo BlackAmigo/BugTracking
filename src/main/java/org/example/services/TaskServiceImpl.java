@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.example.utils.Utils.copyNotNullProperties;
+import static org.example.utils.Utils.copyProperties;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -25,13 +25,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task update(Task source, Task target) {
-        if (target != null && source != null) {
-            copyNotNullProperties(source, target);
-            return save(target);
-        } else {
-            return null;
+    public ValidationResult<Task> update(Task source, Task target) {
+        ValidationResult<Task> result = copyProperties(source, target);
+        if (result.getErrors().isEmpty()) {
+            save(target);
         }
+        return new ValidationResult<>(result.getEntity(), result.getErrors());
     }
 
     @Override

@@ -7,7 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -47,13 +50,13 @@ public abstract class AbstractController<E>{
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<E> update(@PathVariable("id") E target, E source) {
-        E updated = service.update(source, target);
-        if (updated != null) {
-            return new ResponseEntity<>(updated, HttpStatus.OK);
+    @GetMapping("/name/{name}")
+    public ResponseEntity<Object> findByName (@PathVariable("name") String name){
+        Optional<E> project = service.findByName(name);
+        if (project.isPresent()) {
+            return new ResponseEntity<>(project, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

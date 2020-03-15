@@ -7,8 +7,9 @@ import java.util.Optional;
 
 public interface EntityService<E> {
     E save(E entity);
-    E update(E source, E target);
+    ValidationResult<E> update(E source, E target);
     Page<E> getAll(Pageable pageable);
     Optional<E> getById(Long id);
     boolean delete(E entity);
+    Optional<E> findByName(String name);
 }
