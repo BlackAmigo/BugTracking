@@ -44,7 +44,7 @@ public class Utils {
      * @param source - объект, откуда необходимо скопировать свойства
      * @param target - объект, куда необходимо скопировать свойства
      */
-    private static void copyNotNullNotSameProperties(Object source, Object target) {
+    public static void copyNotNullNotSameProperties(Object source, Object target) {
         String[] arr1 = getNullProperties(source);
         String[] arr2 = getSameProperties(source, target);
         String[] arr3 = new String[arr1.length + arr2.length];
