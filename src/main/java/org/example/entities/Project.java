@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Project {
@@ -19,6 +20,8 @@ public class Project {
     private String textDescription;
     private final Date createdDate;
     private Date lastModifiedDate;
+    @OneToMany(mappedBy = "project")
+    private List<Task> tasksList;
 
     public Project() {
         this.createdDate = new Date();
@@ -58,6 +61,14 @@ public class Project {
 
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public List<Task> getTasksList() {
+        return tasksList;
+    }
+
+    public void setTasksList(List<Task> tasksList) {
+        this.tasksList = tasksList;
     }
 
     @Override

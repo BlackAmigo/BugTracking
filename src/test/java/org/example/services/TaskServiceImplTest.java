@@ -1,5 +1,6 @@
 package org.example.services;
 
+import org.example.entities.Project;
 import org.example.entities.Task;
 import org.example.repositories.TaskRepository;
 import org.junit.Test;
@@ -152,10 +153,15 @@ public class TaskServiceImplTest {
 
     @Test
     public void update() {
+        Project project = new Project();
+        project.setName("Project");
+        project.setTextDescription("Description");
+
         Task taskSource = new Task();
         taskSource.setName("taskSource");
         taskSource.setPriority(1);
-        taskSource.setProjectId(10L);
+        taskSource.setProject(project);
+
         Task taskTarget = new Task();
         taskTarget.setName("taskTarget");
         taskTarget.setTextDescription("textDescriptionTarget");
@@ -172,7 +178,6 @@ public class TaskServiceImplTest {
         verifyNoMoreInteractions(taskRepositoryMock);
         assertEquals(editedTask.getName(), taskSource.getName());
         assertEquals(editedTask.getPriority(), taskSource.getPriority());
-        assertEquals(editedTask.getProjectId(), taskSource.getProjectId());
         assertTrue(errors.isEmpty());
     }
 
